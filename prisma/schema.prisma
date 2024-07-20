@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Définir les énumérations pour les statuts
+enum Status {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+// Définir les modèles
+model User {
+  id              Int             @id @default(autoincrement())
+  email           String          @unique
+  passwordDigest  String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  subscriptionId  Int
+  subscription    Subscription    @relation(fields: [subscriptionId], references: [id])
+  profiles        Profile[]
+  services        Service[]
+  creneaux        Creneau[]
+  appointments    Appointment[]   @relation("UserAppointments")
+}
+
+model Profile {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id])
+  name      String
+  bio       String?
+  reviews   Review[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Service {
+  id          Int          @id @default(autoincrement())
+  userId      Int
+  user        User         @relation(fields: [userId], references: [id])
+  title       String
+  description String?
+  price       Float
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  appointments Appointment[]
+}
+
+model Appointment {
+  id              Int         @id @default(autoincrement())
+  userId          Int
+  user            User        @relation("UserAppointments", fields: [userId], references: [id])
+  serviceId       Int
+  service         Service     @relation(fields: [serviceId], references: [id])
+  creneauId       Int
+  creneau         Creneau     @relation(fields: [creneauId], references: [id])
+  appointmentTime DateTime
+  status          Status
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Review {
+  id            Int        @id @default(autoincrement())
+  profileId     Int
+  profile       Profile    @relation(fields: [profileId], references: [id])
+  rating        Int
+  comment       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Creneau {
+  id          Int          @id @default(autoincrement())
+  userId      Int
+  user        User         @relation(fields: [userId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+  status      Status
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  appointments Appointment[]
+}
+
+model Subscription {
+  id          Int          @id @default(autoincrement())
+  name        String
+  maxCreneaux Int
+  users       User[]
+}
