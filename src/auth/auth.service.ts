@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { AuthBody } from './auth.controller';
 import { PrismaService } from 'src/prisma.service';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserPayload } from './jwt.strategy';
+import { LogInUserDto } from './dto/login-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(authBody: AuthBody) {
+  async login(authBody: LogInUserDto) {
     const { email, password } = authBody;
 
     if (!email || !password) {
@@ -35,12 +36,12 @@ export class AuthService {
     if (!isPasswordCorrect) {
       throw new UnauthorizedException('Le mot de passe est invalide.');
     }
-
+    console.log(user)
     return this.authenticateUser({ userId: user.id });
   }
 
 
-  async register(authBody: AuthBody) {
+  async register(authBody: CreateUserDto) {
     const { email, password } = authBody;
 
     if (!email || !password) {

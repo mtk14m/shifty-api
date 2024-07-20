@@ -4,8 +4,8 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth-guard';
 import { RequestWithUser } from './jwt.strategy';
 import { UserService } from 'src/user/user.service';
-
-export type AuthBody= {email : string,password: string}
+import { CreateUserDto } from './dto/create-user.dto';
+import { LogInUserDto } from './dto/login-user.dto';
 
 
 @Controller('auth')
@@ -15,12 +15,12 @@ export class AuthController {
     ){}
     //user login 
     @Post('login')
-    async login(@Body() authBody: AuthBody){
+    async login(@Body() authBody: LogInUserDto){
         return this.authService.login(authBody)
     } 
 
     @Post('register')
-    async register(@Body() authBody: AuthBody){
+    async register(@Body() authBody: CreateUserDto){
         return this.authService.register(authBody)
     } 
 
