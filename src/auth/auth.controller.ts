@@ -27,7 +27,7 @@ export class AuthController {
     //on veutt utiliser la strategy-jwt
     @UseGuards(JwtAuthGuard)
     @Get()
-    async authentificateUser(@Request() request: RequestWithUser){
+    async getAuthentificateUser(@Request() request: RequestWithUser){
         return await this.userService.getUser(request.user);
     }
 
