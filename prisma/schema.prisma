@@ -28,7 +28,8 @@ model User {
   updatedAt       DateTime        @updatedAt
   subscriptionId  String
   subscription    Subscription    @relation(fields: [subscriptionId], references: [id])
-  profiles        Profile[]
+  profileId       String          @unique
+  profile         Profile         @relation(fields: [profileId], references: [id])
   services        Service[]
   creneaux        Creneau[]
   appointments    Appointment[]   @relation("UserAppointments")
@@ -36,8 +37,7 @@ model User {
 
 model Profile {
   id        String     @id @default(uuid())
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  user      User?
   name      String
   bio       String?
   reviews   Review[]

@@ -83,12 +83,16 @@ export class AuthService {
       // Crée une nouvelle souscription pour l'utilisateur
       const newSubscriptionId = await this.createSubscription();
 
-      // Crée un nouvel utilisateur dans la base de données
+      // Crée un profil pour le nouvel utilisateur
+      const newProfileId = await this.createProfile(email);
+
+      // Crée un nouvel utilisateur dans la base de données avec un profil associé
       const newUser = await this.prisma.user.create({
         data: {
           email: email,
           passwordDigest: hashedPassword,
           subscriptionId: newSubscriptionId,
+          profileId: newProfileId,
         },
       });
 
@@ -126,5 +130,15 @@ export class AuthService {
       },
     });
     return newSubscription.id;
+  }
+
+  // Méthode pour créer un profil pour un nouvel utilisateur et retourner son ID
+  private async createProfile(name: string) {
+    const newProfile = await this.prisma.profile.create({
+      data: {
+        name: name,
+      },
+    });
+    return newProfile.id;
   }
 }
